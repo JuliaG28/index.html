@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Julia Gabriele — Videomaker · Estrategista · IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080808;
+  --bg2: #0f0f0f;
+  --bg3: #161616;
+  --white: #f5f0eb;
+  --gray: #888;
+  --gray2: #444;
+  --accent: #e63012;
+  --accent2: #ff6b2b;
+  --gold: #c8a96e;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* CUSTOM CURSOR */
+.cursor {
+  width: 10px; height: 10px;
+  background: var(--accent);
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.15s ease;
+  mix-blend-mode: difference;
+}
+.cursor-ring {
+  width: 36px; height: 36px;
+  border: 1px solid rgba(230,48,18,0.5);
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9998;
+  transition: transform 0.4s ease, width 0.3s, height 0.3s;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 48px;
+  background: linear-gradient(to bottom, rgba(8,8,8,0.95) 0%, transparent 100%);
+  backdrop-filter: blur(0px);
+  transition: background 0.3s, backdrop-filter 0.3s;
+}
+nav.scrolled {
+  background: rgba(8,8,8,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--gray2);
+}
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 3px;
+  color: var(--white);
+  text-decoration: none;
+}
+.nav-links {
+  display: flex;
+  gap: 36px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--gray);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-cta {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: var(--accent);
+  color: var(--white);
+  border: none;
+  padding: 10px 22px;
+  cursor: none;
+  transition: background 0.2s, transform 0.2s;
+  text-decoration: none;
+}
+.nav-cta:hover { background: var(--accent2); transform: translateY(-1px); }
+
+/* HERO */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 48px 80px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(230,48,18,0.08) 0%, transparent 60%),
+              radial-gradient(ellipse at 20% 80%, rgba(200,169,110,0.05) 0%, transparent 50%);
+}
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 80px 80px;
+  opacity: 0.5;
+}
+.hero-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.2s forwards;
+}
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(56px, 9vw, 140px);
+  line-height: 0.92;
+  letter-spacing: -1px;
+  max-width: 900px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.4s forwards;
+}
+.hero-title span { color: var(--accent); }
+.hero-sub {
+  max-width: 480px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--gray);
+  margin-top: 28px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.6s forwards;
+}
+.hero-pills {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.8s forwards;
+}
+.pill {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border: 1px solid var(--gray2);
+  padding: 8px 16px;
+  color: var(--gray);
+}
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 40px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 1s forwards;
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--white);
+  border: none;
+  padding: 14px 32px;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: none;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s;
+  display: inline-block;
+}
+.btn-primary:hover { background: var(--accent2); transform: translateY(-2px); }
+.btn-ghost {
+  background: transparent;
+  color: var(--white);
+  border: 1px solid var(--gray2);
+  padding: 14px 32px;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: none;
+  text-decoration: none;
+  transition: border-color 0.2s, transform 0.2s;
+  display: inline-block;
+}
+.btn-ghost:hover { border-color: var(--white); transform: translateY(-2px); }
+.hero-meta {
+  position: absolute;
+  right: 48px;
+  bottom: 80px;
+  text-align: right;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 1.2s forwards;
+}
+.hero-meta p {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--gray);
+  text-transform: uppercase;
+  line-height: 2;
+}
+.scroll-hint {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--gray);
+  text-transform: uppercase;
+  animation: bounce 2s ease infinite;
+  opacity: 0;
+  animation: fadeUp 1s ease 1.5s forwards, bounce 2s ease 2.5s infinite;
+}
+
+/* SECTION COMMON */
+section { padding: 120px 48px; }
+.section-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(36px, 5vw, 72px);
+  line-height: 1;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+.section-desc {
+  font-size: 15px;
+  color: var(--gray);
+  max-width: 560px;
+  line-height: 1.8;
+  margin-bottom: 48px;
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 48px;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+/* PORTFOLIO */
+#portfolio { background: var(--bg); }
+
+/* CATEGORY TABS */
+.category-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 48px;
+  flex-wrap: wrap;
+}
+.cat-tab {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border: 1px solid var(--gray2);
+  background: transparent;
+  color: var(--gray);
+  cursor: none;
+  transition: all 0.2s;
+}
+.cat-tab:hover, .cat-tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--white);
+}
+
+/* VIDEO GRID */
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 2px;
+}
+.video-card {
+  position: relative;
+  background: var(--bg3);
+  overflow: hidden;
+  aspect-ratio: 9/16;
+  cursor: none;
+}
+.video-card.hidden { display: none; }
+.video-card video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.video-card:hover video { transform: scale(1.03); }
+.video-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.video-card:hover .video-overlay { opacity: 1; }
+.play-btn {
+  width: 64px; height: 64px;
+  border: 2px solid var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.video-card:hover .play-btn {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+.play-btn:hover { background: var(--accent); border-color: var(--accent); }
+.play-btn svg { margin-left: 4px; }
+.video-info {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 24px 20px 20px;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+  transform: translateY(8px);
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.video-card:hover .video-info {
+  opacity: 1;
+  transform: translateY(0);
+}
+.video-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.video-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 1px;
+  color: var(--white);
+}
+.video-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg3);
+  border: 1px dashed var(--gray2);
+  gap: 12px;
+}
+.video-placeholder svg { opacity: 0.3; }
+.video-placeholder span {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--gray);
+  text-transform: uppercase;
+}
+
+/* VIDEO MODAL */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.95);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+}
+.modal-overlay.open { display: flex; }
+.modal-inner {
+  position: relative;
+  width: 90vw;
+  max-width: 500px;
+}
+.modal-inner video {
+  width: 100%;
+  max-height: 85vh;
+  object-fit: contain;
+  background: #000;
+}
+.modal-close {
+  position: absolute;
+  top: -44px;
+  right: 0;
+  background: none;
+  border: none;
+  color: var(--white);
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  cursor: none;
+  text-transform: uppercase;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.modal-close:hover { opacity: 1; }
+.modal-info {
+  padding: 20px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.modal-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 1px;
+}
+
+/* SERVICES */
+#services { background: var(--bg2); }
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1px;
+  background: var(--gray2);
+}
+.service-card {
+  background: var(--bg2);
+  padding: 48px 36px;
+  transition: background 0.3s;
+}
+.service-card:hover { background: var(--bg3); }
+.service-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  color: var(--gray2);
+  line-height: 1;
+  margin-bottom: 20px;
+  transition: color 0.3s;
+}
+.service-card:hover .service-num { color: var(--accent); }
+.service-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+.service-tagline {
+  font-size: 13px;
+  color: var(--accent2);
+  margin-bottom: 20px;
+  font-style: italic;
+}
+.service-items {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.service-items li {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--gray);
+  padding-left: 16px;
+  position: relative;
+}
+.service-items li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+
+/* DIFERENCIAL */
+#diferencial { background: var(--bg); }
+.dif-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+.dif-card {
+  padding: 48px;
+  border: 1px solid var(--gray2);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.dif-card:hover { border-color: var(--accent); }
+.dif-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 0;
+  background: var(--accent);
+  transition: height 0.4s ease;
+}
+.dif-card:hover::before { height: 100%; }
+.dif-icon {
+  font-size: 32px;
+  margin-bottom: 24px;
+}
+.dif-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+.dif-text {
+  font-size: 14px;
+  color: var(--gray);
+  line-height: 1.8;
+}
+
+/* PARTNERS */
+#parceiros { background: var(--bg2); padding: 80px 0; overflow: hidden; }
+.partners-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--gray);
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 48px;
+}
+.ticker-wrap { overflow: hidden; position: relative; }
+.ticker-wrap::before, .ticker-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 120px;
+  z-index: 2;
+}
+.ticker-wrap::before { left: 0; background: linear-gradient(to right, var(--bg2), transparent); }
+.ticker-wrap::after { right: 0; background: linear-gradient(to left, var(--bg2), transparent); }
+.ticker {
+  display: flex;
+  gap: 64px;
+  animation: ticker 20s linear infinite;
+  width: max-content;
+}
+.ticker-item {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 4px;
+  color: var(--gray2);
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+.ticker-item:hover { color: var(--white); }
+
+/* RESULTS */
+#resultados { background: var(--bg); }
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2px;
+}
+.testimonial {
+  padding: 40px 36px;
+  border: 1px solid var(--gray2);
+  position: relative;
+  transition: border-color 0.3s;
+}
+.testimonial:hover { border-color: var(--accent); }
+.quote-mark {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 80px;
+  line-height: 0.6;
+  color: var(--accent);
+  opacity: 0.3;
+  margin-bottom: 16px;
+  display: block;
+}
+.testimonial-text {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--white);
+  margin-bottom: 28px;
+  font-style: italic;
+}
+.testimonial-author {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.testimonial-role {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--gray);
+  margin-top: 4px;
+}
+
+/* CONTACT */
+#contato { background: var(--bg2); }
+.contact-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+.form-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--gray);
+  text-transform: uppercase;
+}
+.form-input {
+  background: var(--bg3);
+  border: 1px solid var(--gray2);
+  color: var(--white);
+  padding: 14px 18px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+.form-input:focus { border-color: var(--accent); }
+.form-input::placeholder { color: var(--gray2); }
+.contact-info { padding-top: 8px; }
+.contact-info .section-title { margin-bottom: 20px; }
+.contact-detail {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.contact-icon {
+  width: 44px; height: 44px;
+  border: 1px solid var(--gray2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.contact-detail-text p:first-child {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--gray);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.contact-detail-text p:last-child {
+  font-size: 15px;
+  color: var(--white);
+}
+
+/* FOOTER */
+footer {
+  background: var(--bg);
+  border-top: 1px solid var(--gray2);
+  padding: 48px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+.footer-brand .nav-logo { display: block; margin-bottom: 8px; }
+.footer-brand p {
+  font-size: 13px;
+  color: var(--gray);
+  line-height: 1.6;
+}
+.footer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.footer-nav a {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--gray);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.footer-nav a:hover { color: var(--white); }
+.footer-copy {
+  text-align: right;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--gray2);
+  letter-spacing: 1px;
+  line-height: 2;
+}
+.footer-copy a {
+  color: var(--gray);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-copy a:hover { color: var(--accent); }
+
+/* WHATSAPP FLOAT */
+.wa-float {
+  position: fixed;
+  bottom: 32px; left: 32px;
+  width: 52px; height: 52px;
+  background: #25D366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 900;
+  cursor: none;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+}
+.wa-float:hover { transform: scale(1.1); box-shadow: 0 8px 32px rgba(37,211,102,0.4); }
+
+/* ADMIN */
+#admin-section {
+  display: none;
+  min-height: 100vh;
+  background: var(--bg);
+  padding: 100px 48px 80px;
+}
+#admin-section.visible { display: block; }
+.admin-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 48px;
+  border-bottom: 1px solid var(--gray2);
+}
+.admin-tab {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  background: none;
+  border: none;
+  color: var(--gray);
+  cursor: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.admin-tab:hover { color: var(--white); }
+.admin-tab.active { color: var(--accent); border-color: var(--accent); }
+.admin-panel { display: none; }
+.admin-panel.active { display: block; }
+
+/* Upload form */
+.upload-form {
+  background: var(--bg2);
+  border: 1px solid var(--gray2);
+  padding: 40px;
+  max-width: 640px;
+}
+.upload-form .section-title { font-size: 36px; margin-bottom: 32px; }
+.upload-drop {
+  border: 2px dashed var(--gray2);
+  padding: 48px;
+  text-align: center;
+  cursor: none;
+  transition: border-color 0.2s, background 0.2s;
+  margin-bottom: 24px;
+}
+.upload-drop:hover, .upload-drop.dragover {
+  border-color: var(--accent);
+  background: rgba(230,48,18,0.05);
+}
+.upload-drop svg { opacity: 0.4; margin-bottom: 16px; }
+.upload-drop p {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--gray);
+  text-transform: uppercase;
+}
+.upload-drop input[type="file"] {
+  display: none;
+}
+.upload-preview {
+  margin-bottom: 24px;
+}
+.upload-preview video {
+  max-width: 100%;
+  max-height: 280px;
+  background: #000;
+}
+.admin-select {
+  background: var(--bg3);
+  border: 1px solid var(--gray2);
+  color: var(--white);
+  padding: 14px 18px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  outline: none;
+  width: 100%;
+  cursor: none;
+  margin-bottom: 16px;
+  appearance: none;
+}
+.admin-select:focus { border-color: var(--accent); }
+
+/* Leads table */
+.leads-table-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+thead tr {
+  border-bottom: 1px solid var(--accent);
+}
+th {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--accent);
+  text-transform: uppercase;
+  padding: 12px 20px;
+  text-align: left;
+}
+td {
+  padding: 16px 20px;
+  font-size: 14px;
+  color: var(--gray);
+  border-bottom: 1px solid var(--bg3);
+}
+tr:hover td { background: var(--bg2); color: var(--white); }
+.lead-actions { display: flex; gap: 8px; }
+.btn-sm {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border: 1px solid var(--gray2);
+  background: none;
+  color: var(--gray);
+  cursor: none;
+  transition: all 0.2s;
+}
+.btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+.btn-sm.danger:hover { border-color: #e63012; color: #e63012; }
+
+.admin-login {
+  max-width: 400px;
+  margin: 0 auto;
+  background: var(--bg2);
+  border: 1px solid var(--gray2);
+  padding: 48px;
+}
+.admin-login .section-title { font-size: 40px; margin-bottom: 8px; }
+.admin-login .section-desc { margin-bottom: 32px; }
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  margin-bottom: 48px;
+}
+.stat-card {
+  background: var(--bg2);
+  border: 1px solid var(--gray2);
+  padding: 28px;
+}
+.stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  color: var(--accent);
+  line-height: 1;
+}
+.stat-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--gray);
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+.empty-state {
+  text-align: center;
+  padding: 80px 40px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--gray2);
+  text-transform: uppercase;
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-8px); }
+}
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* REVEAL ON SCROLL */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  nav { padding: 20px 24px; }
+  .nav-links { display: none; }
+  section { padding: 80px 24px; }
+  #hero { padding: 0 24px 80px; }
+  .hero-meta { display: none; }
+  .contact-wrap { grid-template-columns: 1fr; gap: 48px; }
+  .dif-grid { grid-template-columns: 1fr; }
+  footer { grid-template-columns: 1fr; text-align: center; }
+  .footer-copy { text-align: center; }
+  .admin-stats { grid-template-columns: 1fr; }
+  .video-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  background: var(--bg3);
+  border: 1px solid var(--accent);
+  color: var(--white);
+  padding: 16px 24px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  z-index: 5000;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+.main-site { display: block; }
+.main-site.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- WHATSAPP -->
+<a href="https://wa.me/5519971127468" class="wa-float" target="_blank" aria-label="WhatsApp">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<!-- MAIN SITE -->
+<div class="main-site" id="mainSite">
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">Julia Gabriele</a>
+  <ul class="nav-links">
+    <li><a href="#portfolio">Portfólio</a></li>
+    <li><a href="#services">Serviços</a></li>
+    <li><a href="#diferencial">Diferencial</a></li>
+    <li><a href="#resultados">Resultados</a></li>
+    <li><a href="#contato">Contato</a></li>
+  </ul>
+  <a href="#contato" class="nav-cta">Orçamento</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-tag">2026 · Videomaker · Estrategista · IA aplicada</div>
+  <h1 class="hero-title">Transformo ideias em vídeos que <span>vendem</span>, engajam e posicionam sua marca.</h1>
+  <p class="hero-sub">Não entrego só vídeo bonito. Entrego estratégia, conteúdo e performance — pensados pra vender, não só aparecer.</p>
+  <div class="hero-pills">
+    <span class="pill">Conteúdo que gera engajamento real</span>
+    <span class="pill">Estratégia pensada pra crescimento</span>
+    <span class="pill">Produção + posicionamento + resultado</span>
+  </div>
+  <div class="hero-actions">
+    <a href="#contato" class="btn-primary">Solicitar orçamento</a>
+    <a href="#portfolio" class="btn-ghost">Ver portfólio</a>
+  </div>
+  <div class="hero-meta">
+    <p>@juliarafael_</p>
+    <p>BASE · CAMPINAS / SP</p>
+  </div>
+  <p class="scroll-hint">↓ role pra ver trabalhos</p>
+</section>
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+  <div class="section-header">
+    <div>
+      <p class="section-label reveal">/ 01 — portfólio</p>
+      <h2 class="section-title reveal">Trabalhos que já entreguei</h2>
+      <p class="section-desc reveal">Uma seleção dos projetos mais recentes — reels, bastidores e campanhas com resultado real.</p>
+    </div>
+    <a href="#contato" class="btn-primary reveal">Quero algo assim</a>
+  </div>
+
+  <!-- CATEGORY TABS -->
+  <div class="category-tabs reveal">
+    <button class="cat-tab active" data-cat="todos">Todos</button>
+    <button class="cat-tab" data-cat="ia">IA</button>
+    <button class="cat-tab" data-cat="edicao">Apenas edição</button>
+    <button class="cat-tab" data-cat="captacao-edicao">Captação e edição</button>
+  </div>
+
+  <div class="video-grid" id="videoGrid">
+    <!-- Videos rendered by JS -->
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <p class="section-label reveal">/ 02 — serviços</p>
+  <h2 class="section-title reveal">Como posso te ajudar</h2>
+  <p class="section-desc reveal">Quatro áreas que trabalham juntas. Você pode contratar por peça ou fechar um pacote completo — do planejamento ao anúncio rodando.</p>
+  <div class="services-grid reveal">
+    <div class="service-card">
+      <div class="service-num">01</div>
+      <div class="service-name">Produção de Conteúdo</div>
+      <div class="service-tagline">Vídeos que param o feed e contam história.</div>
+      <ul class="service-items">
+        <li>Captação em vídeo (reels, campanha, evento)</li>
+        <li>Edição profissional e cinematográfica</li>
+        <li>Storytelling estratégico por trás de cada peça</li>
+      </ul>
+    </div>
+    <div class="service-card">
+      <div class="service-num">02</div>
+      <div class="service-name">Estratégia para Instagram</div>
+      <div class="service-tagline">Posicionamento + crescimento orgânico.</div>
+      <ul class="service-items">
+        <li>Planejamento de conteúdo semanal</li>
+        <li>Crescimento orgânico (bio, hooks, pilares)</li>
+        <li>Posicionamento de marca e autoridade</li>
+      </ul>
+    </div>
+    <div class="service-card">
+      <div class="service-num">03</div>
+      <div class="service-name">Tráfego Pago</div>
+      <div class="service-tagline">Ads que vendem — não só aparecem.</div>
+      <ul class="service-items">
+        <li>Criação e gestão de campanhas Meta Ads</li>
+        <li>Estratégia de funil por objetivo</li>
+        <li>Otimização orientada a ROAS</li>
+      </ul>
+    </div>
+    <div class="service-card">
+      <div class="service-num">04</div>
+      <div class="service-name">IA aplicada a Fotos & Vídeos</div>
+      <div class="service-tagline">Escala criativa sem perder identidade.</div>
+      <ul class="service-items">
+        <li>Conteúdo com inteligência artificial</li>
+        <li>Otimização visual e upscaling</li>
+        <li>Escala de produção mantendo coerência de marca</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- DIFERENCIAL -->
+<section id="diferencial">
+  <p class="section-label reveal">/ 03 — diferencial</p>
+  <h2 class="section-title reveal">Estratégia + conteúdo + performance.</h2>
+  <p class="section-desc reveal">Vídeo bonito sem estratégia é desperdício de dinheiro. Meu trabalho é juntar as três coisas e transformar conteúdo em ativo de marca.</p>
+  <div class="dif-grid reveal">
+    <div class="dif-card">
+      <div class="dif-icon">🎯</div>
+      <div class="dif-title">Visão de marketing</div>
+      <p class="dif-text">Não é só edição bonita — é conteúdo desenhado pra performar em feed, reels e ads.</p>
+    </div>
+    <div class="dif-card">
+      <div class="dif-icon">🤖</div>
+      <div class="dif-title">IA como acelerador</div>
+      <p class="dif-text">Uso IA pra escalar produção sem perder identidade de marca.</p>
+    </div>
+    <div class="dif-card">
+      <div class="dif-icon">💸</div>
+      <div class="dif-title">Conteúdo pensado pra vender</div>
+      <p class="dif-text">Cada peça tem intenção: gerar DM, cliente, venda — não só view.</p>
+    </div>
+    <div class="dif-card">
+      <div class="dif-icon">📈</div>
+      <div class="dif-title">Experiência com tráfego pago</div>
+      <p class="dif-text">Produção + mídia paga na mesma cabeça = criativos que convertem.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PARCEIROS -->
+<section id="parceiros">
+  <p class="partners-title">Parcerias & Collabs</p>
+  <div class="ticker-wrap">
+    <div class="ticker" id="ticker">
+      <span class="ticker-item">STUDIO 19</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">NORTE.CO</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">CASA SOL</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">LUME BEAUTY</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">AURA LAB</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">RAIZ MODA</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">OUTLINE</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">VÉRTICE</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">MARINA COSMÉTICOS</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">BOSSA CAFÉ</span>
+      <span class="ticker-item">·</span>
+      <!-- duplicate for loop -->
+      <span class="ticker-item">STUDIO 19</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">NORTE.CO</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">CASA SOL</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">LUME BEAUTY</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">AURA LAB</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">RAIZ MODA</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">OUTLINE</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">VÉRTICE</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">MARINA COSMÉTICOS</span>
+      <span class="ticker-item">·</span>
+      <span class="ticker-item">BOSSA CAFÉ</span>
+      <span class="ticker-item">·</span>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTADOS -->
+<section id="resultados">
+  <p class="section-label reveal">/ 05 — resultados</p>
+  <h2 class="section-title reveal">Resultados e experiências</h2>
+  <p class="section-desc reveal">Depoimentos e métricas reais de quem já trabalhou comigo.</p>
+  <div class="testimonials-grid reveal">
+    <div class="testimonial">
+      <span class="quote-mark">"</span>
+      <p class="testimonial-text">A Julia não entregou só vídeo. Ela mudou a forma como a gente pensa conteúdo no Instagram.</p>
+      <p class="testimonial-author">Marina R.</p>
+      <p class="testimonial-role">Fundadora · Lume Beauty</p>
+    </div>
+    <div class="testimonial">
+      <span class="quote-mark">"</span>
+      <p class="testimonial-text">Estratégia + produção + tráfego pago na mesma pessoa é raro — e foi o que fez a diferença pra gente.</p>
+      <p class="testimonial-author">Rafael G.</p>
+      <p class="testimonial-role">CMO · Casa Sol</p>
+    </div>
+    <div class="testimonial">
+      <span class="quote-mark">"</span>
+      <p class="testimonial-text">Olhar apurado, entrega rápida e sempre pensando em posicionamento. Recomendo de olhos fechados.</p>
+      <p class="testimonial-author">Bianca F.</p>
+      <p class="testimonial-role">Creator · Lifestyle</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTATO -->
+<section id="contato">
+  <div class="contact-wrap">
+    <div class="contact-info">
+      <p class="section-label reveal">/ 06 — contato</p>
+      <h2 class="section-title reveal">Bora elevar<br>sua marca?</h2>
+      <p class="section-desc reveal">Preenche seu nome, telefone e email. Quando você clicar, abro uma conversa direta no WhatsApp com a mensagem já pronta — sem fricção.</p>
+      <div class="reveal">
+        <div class="contact-detail">
+          <div class="contact-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.92a16 16 0 006.17 6.17l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          </div>
+          <div class="contact-detail-text">
+            <p>WhatsApp</p>
+            <p>+55 19 97112-7468</p>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </div>
+          <div class="contact-detail-text">
+            <p>Instagram</p>
+            <p>@juliarafael_</p>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div class="contact-detail-text">
+            <p>Base</p>
+            <p>Campinas / SP</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="contact-form" id="contactForm">
+        <div class="form-group">
+          <label class="form-label">Seu nome</label>
+          <input class="form-input" id="leadName" type="text" placeholder="Como te chamam?">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Telefone / WhatsApp</label>
+          <input class="form-input" id="leadPhone" type="tel" placeholder="(99) 99999-9999">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email (opcional)</label>
+          <input class="form-input" id="leadEmail" type="email" placeholder="seu@email.com">
+        </div>
+        <button class="btn-primary" onclick="submitLead()" style="margin-top:8px;cursor:none;">Falar comigo no WhatsApp</button>
+        <p style="font-family:'Space Mono',monospace;font-size:10px;color:var(--gray);letter-spacing:1px;margin-top:8px;">Ao enviar, você abre uma conversa direta. Respondo em até 24h.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <a href="#" class="nav-logo">Julia Gabriele</a>
+    <p>Conteúdo pensado pra vender<br>— não só aparecer.</p>
+  </div>
+  <div class="footer-nav">
+    <a href="#portfolio">Portfólio</a>
+    <a href="#services">Serviços</a>
+    <a href="#contato">Orçamento</a>
+    <a href="#" onclick="showAdmin(event)">Admin</a>
+  </div>
+  <div class="footer-copy">
+    <p>© 2026 Julia Gabriele.</p>
+    <p>Todos os direitos reservados.</p>
+    <br>
+    <a href="#" onclick="scrollToTop(event)">↑ voltar ao topo</a>
+  </div>
+</footer>
+
+</div><!-- /main-site -->
+
+<!-- VIDEO MODAL -->
+<div class="modal-overlay" id="videoModal">
+  <div class="modal-inner">
+    <button class="modal-close" onclick="closeModal()">✕ Fechar</button>
+    <video id="modalVideo" controls playsinline style="width:100%;"></video>
+    <div class="modal-info">
+      <div>
+        <p class="modal-tag" id="modalTag"></p>
+        <p class="modal-title" id="modalTitle"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN SECTION -->
+<div id="admin-section">
+  <nav id="adminNav" style="position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:24px 48px;background:rgba(8,8,8,0.95);border-bottom:1px solid var(--gray2);">
+    <a href="#" class="nav-logo" onclick="exitAdmin(event)">← Julia Gabriele</a>
+    <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;">Painel Admin</span>
+    <button onclick="logoutAdmin()" class="btn-ghost" style="cursor:none;font-size:11px;">Sair</button>
+  </nav>
+
+  <div id="adminLogin" style="display:block;">
+    <div class="admin-login">
+      <p class="section-label">Acesso restrito</p>
+      <h2 class="section-title">Admin</h2>
+      <p class="section-desc">Entre com suas credenciais para acessar o painel.</p>
+      <div class="contact-form">
+        <div class="form-group">
+          <label class="form-label">Usuário</label>
+          <input class="form-input" id="adminUser" type="text" placeholder="usuario">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Senha</label>
+          <input class="form-input" id="adminPass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')loginAdmin()">
+        </div>
+        <button class="btn-primary" onclick="loginAdmin()" style="cursor:none;">Entrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="adminDashboard" style="display:none;">
+    <div class="admin-stats" id="adminStats"></div>
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchTab('videos', this)">Vídeos</button>
+      <button class="admin-tab" onclick="switchTab('leads', this)">Leads</button>
+    </div>
+
+    <!-- VIDEOS PANEL -->
+    <div class="admin-panel active" id="tab-videos">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;">
+        <div class="upload-form">
+          <h3 class="section-title" style="font-size:32px;margin-bottom:28px;">Subir vídeo</h3>
+          <div class="upload-drop" id="uploadDrop" onclick="document.getElementById('fileInput').click()">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <p style="margin-top:12px;">Clique ou arraste o vídeo aqui</p>
+            <p style="color:var(--gray2);margin-top:6px;">.mp4, .mov, .webm</p>
+            <input type="file" id="fileInput" accept="video/*" onchange="handleFileSelect(this)">
+          </div>
+          <div class="upload-preview" id="uploadPreview" style="display:none;"></div>
+          <div class="form-group" style="margin-bottom:16px;">
+            <label class="form-label">Título do vídeo</label>
+            <input class="form-input" id="uploadTitle" type="text" placeholder="Ex: Campanha Lançamento">
+          </div>
+          <div class="form-group" style="margin-bottom:16px;">
+            <label class="form-label">Tag / Tipo</label>
+            <input class="form-input" id="uploadTag" type="text" placeholder="Ex: REELS • MODA">
+          </div>
+          <div class="form-group" style="margin-bottom:24px;">
+            <label class="form-label">Categoria</label>
+            <select class="admin-select" id="uploadCat">
+              <option value="captacao-edicao">Captação e edição</option>
+              <option value="edicao">Apenas edição</option>
+              <option value="ia">IA</option>
+            </select>
+          </div>
+          <button class="btn-primary" onclick="uploadVideo()" style="cursor:none;width:100%;">Adicionar ao portfólio</button>
+        </div>
+
+        <div>
+          <h3 class="section-title" style="font-size:32px;margin-bottom:28px;">Vídeos no portfólio</h3>
+          <div id="adminVideoList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEADS PANEL -->
+    <div class="admin-panel" id="tab-leads">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;">
+        <h3 class="section-title" style="font-size:32px;">Leads cadastrados</h3>
+        <button class="btn-ghost" onclick="exportLeads()" style="cursor:none;">↓ Exportar CSV</button>
+      </div>
+      <div class="leads-table-wrap">
+        <table id="leadsTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nome</th>
+              <th>Telefone</th>
+              <th>Email</th>
+              <th>Data</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="leadsBody"></tbody>
+        </table>
+        <div class="empty-state" id="leadsEmpty" style="display:none;">Nenhum lead cadastrado ainda.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DATA STORE (localStorage) ───────────────────────────────────
+const STORAGE_KEYS = { videos: 'jg_videos', leads: 'jg_leads' };
+
+function getVideos() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.videos)) || []; }
+  catch { return []; }
+}
+function saveVideos(v) { localStorage.setItem(STORAGE_KEYS.videos, JSON.stringify(v)); }
+
+function getLeads() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.leads)) || []; }
+  catch { return []; }
+}
+function saveLeads(l) { localStorage.setItem(STORAGE_KEYS.leads, JSON.stringify(l)); }
+
+// ─── CURSOR ──────────────────────────────────────────────────────
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.transform = `translate(${mx - 5}px, ${my - 5}px)`;
+});
+function animateRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  cursorRing.style.transform = `translate(${rx - 18}px, ${ry - 18}px)`;
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+
+// ─── NAV SCROLL ──────────────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// ─── SCROLL REVEAL ───────────────────────────────────────────────
+const ro = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); ro.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+function scrollToTop(e) { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+// ─── TOAST ───────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ─── CATEGORY TABS ───────────────────────────────────────────────
+document.querySelectorAll('.cat-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterVideos(btn.dataset.cat);
+  });
+});
+
+function filterVideos(cat) {
+  document.querySelectorAll('.video-card').forEach(card => {
+    const match = cat === 'todos' || card.dataset.cat === cat;
+    card.classList.toggle('hidden', !match);
+  });
+}
+
+// ─── RENDER VIDEO GRID ───────────────────────────────────────────
+function renderVideoGrid() {
+  const grid = document.getElementById('videoGrid');
+  const videos = getVideos();
+  grid.innerHTML = '';
+
+  if (videos.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;padding:80px;text-align:center;border:1px dashed var(--gray2);">
+        <p style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--gray2);text-transform:uppercase;">Portfólio em construção — em breve novos trabalhos aqui.</p>
+      </div>`;
+    return;
+  }
+
+  videos.forEach((v, i) => {
+    const card = document.createElement('div');
+    card.className = 'video-card';
+    card.dataset.cat = v.category || 'captacao-edicao';
+    card.innerHTML = `
+      <video src="${v.src}" loop muted playsinline preload="metadata"></video>
+      <div class="video-overlay"></div>
+      <div class="play-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </div>
+      <div class="video-info">
+        <p class="video-tag">${v.tag || ''}</p>
+        <p class="video-title">${v.title || ''}</p>
+      </div>`;
+
+    // hover to preview (muted)
+    const vid = card.querySelector('video');
+    card.addEventListener('mouseenter', () => vid.play().catch(() => {}));
+    card.addEventListener('mouseleave', () => { vid.pause(); vid.currentTime = 0; });
+
+    // click to open modal with sound
+    card.addEventListener('click', () => openModal(v));
+    grid.appendChild(card);
+  });
+
+  filterVideos(document.querySelector('.cat-tab.active')?.dataset.cat || 'todos');
+}
+
+// ─── VIDEO MODAL ─────────────────────────────────────────────────
+function openModal(v) {
+  const modal = document.getElementById('videoModal');
+  const modalVid = document.getElementById('modalVideo');
+  document.getElementById('modalTag').textContent = v.tag || '';
+  document.getElementById('modalTitle').textContent = v.title || '';
+  modalVid.src = v.src;
+  modalVid.muted = false;
+  modal.classList.add('open');
+  modalVid.play().catch(() => {});
+}
+
+function closeModal() {
+  const modal = document.getElementById('videoModal');
+  const modalVid = document.getElementById('modalVideo');
+  modal.classList.remove('open');
+  modalVid.pause();
+  modalVid.src = '';
+}
+
+document.getElementById('videoModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ─── LEAD FORM ───────────────────────────────────────────────────
+function submitLead() {
+  const name = document.getElementById('leadName').value.trim();
+  const phone = document.getElementById('leadPhone').value.trim();
+  const email = document.getElementById('leadEmail').value.trim();
+
+  if (!name || !phone) { showToast('Preencha nome e telefone!'); return; }
+
+  const leads = getLeads();
+  leads.push({
+    id: Date.now(),
+    name, phone, email,
+    date: new Date().toLocaleDateString('pt-BR'),
+    time: new Date().toLocaleTimeString('pt-BR')
+  });
+  saveLeads(leads);
+
+  const msg = encodeURIComponent(`Olá, Julia! Me chamo ${name}. Vi seu portfólio e quero saber mais sobre seus serviços.`);
+  window.open(`https://wa.me/5519971127468?text=${msg}`, '_blank');
+  showToast('Redirecionando para o WhatsApp...');
+
+  document.getElementById('leadName').value = '';
+  document.getElementById('leadPhone').value = '';
+  document.getElementById('leadEmail').value = '';
+}
+
+// ─── ADMIN ───────────────────────────────────────────────────────
+const ADMIN_CREDS = { user: 'julia', pass: 'julia2026' };
+
+function showAdmin(e) {
+  e?.preventDefault();
+  document.getElementById('mainSite').classList.add('hidden');
+  document.getElementById('admin-section').classList.add('visible');
+  window.scrollTo(0, 0);
+}
+
+function exitAdmin(e) {
+  e?.preventDefault();
+  document.getElementById('mainSite').classList.remove('hidden');
+  document.getElementById('admin-section').classList.remove('visible');
+  window.scrollTo(0, 0);
+}
+
+function loginAdmin() {
+  const u = document.getElementById('adminUser').value;
+  const p = document.getElementById('adminPass').value;
+  if (u === ADMIN_CREDS.user && p === ADMIN_CREDS.pass) {
+    document.getElementById('adminLogin').style.display = 'none';
+    document.getElementById('adminDashboard').style.display = 'block';
+    renderAdminStats();
+    renderAdminVideoList();
+    renderLeadsTable();
+  } else {
+    showToast('Usuário ou senha incorretos.');
+  }
+}
+
+function logoutAdmin() {
+  document.getElementById('adminLogin').style.display = 'block';
+  document.getElementById('adminDashboard').style.display = 'none';
+  document.getElementById('adminUser').value = '';
+  document.getElementById('adminPass').value = '';
+  exitAdmin();
+}
+
+function renderAdminStats() {
+  const videos = getVideos();
+  const leads = getLeads();
+  const cats = { ia: 0, edicao: 0, 'captacao-edicao': 0 };
+  videos.forEach(v => { if (cats[v.category] !== undefined) cats[v.category]++; });
+  document.getElementById('adminStats').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${videos.length}</div><div class="stat-label">Vídeos</div></div>
+    <div class="stat-card"><div class="stat-num">${leads.length}</div><div class="stat-label">Leads</div></div>
+    <div class="stat-card"><div class="stat-num">${cats.ia}</div><div class="stat-label">Vídeos IA</div></div>`;
+}
+
+function switchTab(name, el) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ─── VIDEO UPLOAD ─────────────────────────────────────────────────
+let pendingVideoSrc = null;
+
+function handleFileSelect(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  pendingVideoSrc = url;
+  const preview = document.getElementById('uploadPreview');
+  preview.style.display = 'block';
+  preview.innerHTML = `<video src="${url}" controls muted style="max-width:100%;max-height:240px;background:#000;"></video>`;
+}
+
+const uploadDrop = document.getElementById('uploadDrop');
+uploadDrop.addEventListener('dragover', e => { e.preventDefault(); uploadDrop.classList.add('dragover'); });
+uploadDrop.addEventListener('dragleave', () => uploadDrop.classList.remove('dragover'));
+uploadDrop.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadDrop.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('video/')) {
+    const url = URL.createObjectURL(file);
+    pendingVideoSrc = url;
+    const preview = document.getElementById('uploadPreview');
+    preview.style.display = 'block';
+    preview.innerHTML = `<video src="${url}" controls muted style="max-width:100%;max-height:240px;background:#000;"></video>`;
+  }
+});
+
+function uploadVideo() {
+  const title = document.getElementById('uploadTitle').value.trim();
+  const tag = document.getElementById('uploadTag').value.trim();
+  const cat = document.getElementById('uploadCat').value;
+
+  if (!pendingVideoSrc) { showToast('Selecione um vídeo primeiro!'); return; }
+  if (!title) { showToast('Adicione um título!'); return; }
+
+  const videos = getVideos();
+  videos.push({ id: Date.now(), src: pendingVideoSrc, title, tag, category: cat });
+  saveVideos(videos);
+
+  // Reset
+  pendingVideoSrc = null;
+  document.getElementById('uploadTitle').value = '';
+  document.getElementById('uploadTag').value = '';
+  document.getElementById('uploadPreview').style.display = 'none';
+  document.getElementById('uploadPreview').innerHTML = '';
+  document.getElementById('fileInput').value = '';
+
+  showToast('Vídeo adicionado ao portfólio!');
+  renderAdminVideoList();
+  renderAdminStats();
+  renderVideoGrid();
+}
+
+function deleteVideo(id) {
+  if (!confirm('Remover este vídeo?')) return;
+  const videos = getVideos().filter(v => v.id !== id);
+  saveVideos(videos);
+  renderAdminVideoList();
+  renderAdminStats();
+  renderVideoGrid();
+  showToast('Vídeo removido.');
+}
+
+function renderAdminVideoList() {
+  const list = document.getElementById('adminVideoList');
+  const videos = getVideos();
+  if (videos.length === 0) {
+    list.innerHTML = '<div class="empty-state">Nenhum vídeo ainda.</div>';
+    return;
+  }
+  const catLabels = { ia: 'IA', edicao: 'Apenas edição', 'captacao-edicao': 'Captação e edição' };
+  list.innerHTML = videos.map(v => `
+    <div style="display:flex;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid var(--bg3);">
+      <video src="${v.src}" muted style="width:72px;height:96px;object-fit:cover;background:#000;flex-shrink:0;"></video>
+      <div style="flex:1;min-width:0;">
+        <p style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${v.title}</p>
+        <p style="font-family:'Space Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:2px;margin-top:4px;">${v.tag || ''}</p>
+        <p style="font-family:'Space Mono',monospace;font-size:10px;color:var(--gray);letter-spacing:1px;margin-top:4px;">${catLabels[v.category] || v.category}</p>
+      </div>
+      <button class="btn-sm danger" onclick="deleteVideo(${v.id})">Remover</button>
+    </div>`).join('');
+}
+
+// ─── LEADS TABLE ─────────────────────────────────────────────────
+function renderLeadsTable() {
+  const leads = getLeads();
+  const tbody = document.getElementById('leadsBody');
+  const empty = document.getElementById('leadsEmpty');
+  const table = document.getElementById('leadsTable');
+
+  if (leads.length === 0) {
+    table.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+
+  table.style.display = '';
+  empty.style.display = 'none';
+  tbody.innerHTML = leads.map((l, i) => `
+    <tr>
+      <td style="color:var(--gray2);font-family:'Space Mono',monospace;font-size:11px;">${String(i+1).padStart(2,'0')}</td>
+      <td>${l.name}</td>
+      <td><a href="https://wa.me/55${l.phone.replace(/\D/g,'')}" target="_blank" style="color:var(--accent);text-decoration:none;">${l.phone}</a></td>
+      <td>${l.email || '—'}</td>
+      <td style="font-family:'Space Mono',monospace;font-size:11px;color:var(--gray);">${l.date} ${l.time}</td>
+      <td>
+        <div class="lead-actions">
+          <button class="btn-sm danger" onclick="deleteLead(${l.id})">Excluir</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function deleteLead(id) {
+  if (!confirm('Excluir este lead?')) return;
+  saveLeads(getLeads().filter(l => l.id !== id));
+  renderLeadsTable();
+  renderAdminStats();
+  showToast('Lead removido.');
+}
+
+function exportLeads() {
+  const leads = getLeads();
+  if (!leads.length) { showToast('Nenhum lead para exportar.'); return; }
+  const header = 'Nome,Telefone,Email,Data,Hora';
+  const rows = leads.map(l => `"${l.name}","${l.phone}","${l.email || ''}","${l.date}","${l.time}"`);
+  const csv = [header, ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'leads_julia_gabriele.csv';
+  a.click();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────
+renderVideoGrid();
+</script>
+</body>
+</html>
